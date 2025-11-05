@@ -5,24 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class Comment extends Model
 {
     use HasFactory;
 
     // Campos que se pueden asignar masivamente
-    protected $fillable = ['title', 'content', 'user_id'];
+    protected $fillable = ['body', 'user_id', 'post_id'];
 
-    // Relación: cada post pertenece a un usuario
+    /**
+     * Relación: Un comentario pertenece a un usuario (User).
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Relación: Un post tiene muchos comentarios.
+     * Relación: Un comentario pertenece a una publicación (Post).
      */
-    public function comments()
+    public function post()
     {
-        return $this->hasMany(Comment::class);
+        return $this->belongsTo(Post::class);
     }
 }
