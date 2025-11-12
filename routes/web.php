@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth; // Asegúrate de que esta línea esté presente si usas Auth::routes()
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\CommentController; // <<---- NUEVA IMPORTACIÓN
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\NotaController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -24,3 +25,5 @@ Route::resource('posts', PostController::class);
 Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
 // Elimina un comentario: DELETE /comments/{comment}
 Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+Route::get('/notas', [NotaController::class, 'index'])->name('notas.index');
+Route::post('/notas', [NotaController::class, 'store'])->name('notas.store');
