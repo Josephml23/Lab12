@@ -2,9 +2,42 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Nota extends Model
 {
-    //
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = ['user_id', 'titulo', 'contenido'];
+
+    // Alcance global: Solo mostrará notas activas (con recordatorios futuros y no completados) [cite: 27]
+    protected static function booted()
+    {
+        static::addGlobalScope('activa', function (Builder $builder) {
+            $builder->whereHas('recordatorio', function ($query) {
+                $query->where('fecha_vencimiento', '>=', now())->where('completado', false);
+            });
+        });
+    }
+
+    // Accesor: Formatear título con estado [cite: 27]
+    public function getTituloFormateadoAttribute()
+    {
+        return $this->recordatorio->completado ? "[Completado] {$this->titulo}" : $this->titulo;
+    }
+
+    // Relación: Nota pertenece a un usuario [cite: 27]
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Relación: Nota tiene un recordatorio [cite: 27]
+    public function recordatorio()
+    {
+        return $this->hasOne(Recordatorio::class);
+    }
 }
