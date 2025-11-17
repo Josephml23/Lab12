@@ -13,10 +13,13 @@ class NotaController extends Controller
         // Cargar usuarios con sus notas activas, recordatorios, y subconsulta para el total de notas activas
         $users = User::with(['notas', 'notas.recordatorio'])
             ->addSelect([
-                'total_notas' => Nota::selectRaw('count(*)')
-                    ->whereColumn('user_id', 'users.id')
-                    // Filtra solo las notas que cumplen con el alcance global 'activa'
-                    ->whereHas('recordatorio', fn($query) => $query->where('fecha_vencimiento', '>=', now())->where('completado', false))
+                // Usamos Nota::query() para empezar la consulta de la tabla 'notas'
+                'total_notas' => Nota::query()
+                    ->selectRaw('count(*)')
+                    // La columna user_id en la tabla 'notas' se compara con la 'id' de la tabla 'users'
+                    ->whereColumn('notas.user_id', 'users.id') 
+                    // Usamos el scope local del modelo Nota para filtrar notas activas
+                    ->activaParaConteo() 
             ])
             ->get();
 

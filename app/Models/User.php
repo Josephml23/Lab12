@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Los atributos que se pueden asignar en masa.
      *
      * @var array<int, string>
      */
@@ -24,7 +24,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Los atributos que deben ocultarse en las respuestas JSON.
      *
      * @var array<int, string>
      */
@@ -34,7 +34,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * Los atributos que deben convertirse a tipos nativos.
      *
      * @var array<string, string>
      */
@@ -43,7 +43,9 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    // Relación para Publicaciones
+    /**
+     * Relación: Un usuario tiene muchos posts.
+     */
     public function posts()
     {
         return $this->hasMany(Post::class);
@@ -55,5 +57,13 @@ class User extends Authenticatable
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Relación: Un usuario tiene muchas notas.
+     */
+    public function notas()
+    {
+        return $this->hasMany(Nota::class);
     }
 }

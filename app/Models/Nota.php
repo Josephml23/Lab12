@@ -13,7 +13,7 @@ class Nota extends Model
 
     protected $fillable = ['user_id', 'titulo', 'contenido'];
 
-    // Alcance global: Solo mostrará notas activas (con recordatorios futuros y no completados) [cite: 27]
+    // Alcance global: Solo mostrará notas activas (con recordatorios futuros y no completados)
     protected static function booted()
     {
         static::addGlobalScope('activa', function (Builder $builder) {
@@ -23,19 +23,27 @@ class Nota extends Model
         });
     }
 
-    // Accesor: Formatear título con estado [cite: 27]
+    // Accesor: Formatear título con estado
     public function getTituloFormateadoAttribute()
     {
         return $this->recordatorio->completado ? "[Completado] {$this->titulo}" : $this->titulo;
     }
 
-    // Relación: Nota pertenece a un usuario [cite: 27]
+    // Scope Local: Usado específicamente para el conteo de la subconsulta en el controlador
+    public function scopeActivaParaConteo(Builder $query)
+    {
+        return $query->whereHas('recordatorio', function ($q) {
+            $q->where('fecha_vencimiento', '>=', now())->where('completado', false);
+        });
+    }
+    
+    // Relación: Nota pertenece a un usuario
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relación: Nota tiene un recordatorio [cite: 27]
+    // Relación: Nota tiene un recordatorio
     public function recordatorio()
     {
         return $this->hasOne(Recordatorio::class);
