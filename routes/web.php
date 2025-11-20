@@ -27,3 +27,4 @@ Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name(
 Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 Route::get('/notas', [NotaController::class, 'index'])->name('notas.index');
 Route::post('/notas', [NotaController::class, 'store'])->name('notas.store');
+Route::resource('actividades', App\Http\Controllers\ActividadController::class);

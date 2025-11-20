@@ -8,13 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('recordatorios', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('nota_id')->constrained()->onDelete('cascade');
-            $table->dateTime('fecha_vencimiento');
-            $table->boolean('completado')->default(false);
-            $table->timestamps();
-        });
+        // 🚨 CAMBIO CLAVE: Agregamos la verificación para evitar el error "Table already exists"
+        if (!Schema::hasTable('recordatorios')) { 
+            Schema::create('recordatorios', function (Blueprint $table) {
+                $table->id();
+                
+                // Clave Foránea: nota_id con eliminación en cascada
+                $table->foreignId('nota_id')->constrained()->onDelete('cascade');
+                
+                $table->dateTime('fecha_vencimiento');
+                $table->boolean('completado')->default(false);
+                
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void
